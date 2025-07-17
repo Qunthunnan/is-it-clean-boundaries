@@ -7,9 +7,13 @@ on:
                 description: "Version number (e.g. 1.4.5)"
                 required: true
 
+permissions:
+    contents: write
+
 jobs:
     create-release:
         runs-on: ubuntu-latest
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
@@ -19,8 +23,11 @@ jobs:
                   git config user.name "github-actions"
                   git config user.email "github-actions@users.noreply.github.com"
 
-            - name: Create Git tag
+            - name: Push Git tag
+              env:
+                  PAT: ${{ secrets.GH_PAT }}
               run: |
+                  git remote set-url origin https://x-access-token:${PAT}@github.com/${{ github.repository }}
                   git tag v${{ github.event.inputs.version }}
                   git push origin v${{ github.event.inputs.version }}
 
@@ -29,4 +36,4 @@ jobs:
               with:
                   tag_name: v${{ github.event.inputs.version }}
                   name: Release v${{ github.event.inputs.version }}
-                  body: "Automated release v${{ github.event.inputs.version }}"
+                  body: "Automated release for version v${{ github.event.inputs.version }}"
