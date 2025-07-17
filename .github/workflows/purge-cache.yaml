@@ -2,7 +2,7 @@ name: Purge jsDelivr Cache
 
 on:
     release:
-        types: [published]
+        types: [published, created, released]
 
 jobs:
     purge-jsdelivr-cache:
